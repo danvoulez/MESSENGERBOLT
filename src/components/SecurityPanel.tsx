@@ -173,13 +173,14 @@ export const SecurityPanel: React.FC = () => {
       )}
 
       {/* Auth History */}
-      <div className="bg-white rounded-xl shadow-sm p-6 border">
+      <div className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} rounded-xl shadow-sm p-4 sm:p-6 border`}>
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold text-gray-800">Histórico de Autenticação</h2>
+          <h2 className={`text-base sm:text-lg font-semibold truncate ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>Histórico de Autenticação</h2>
           <button
             onClick={loadAuthHistory}
             disabled={loading}
-            className="px-3 py-1 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white rounded-lg transition-colors text-sm"
+            aria-label="Atualizar histórico"
+            className={`min-w-[120px] min-h-[44px] px-3 py-2 ${darkMode ? 'bg-blue-700 hover:bg-blue-600 disabled:bg-blue-800' : 'bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400'} text-white rounded-lg transition-colors text-sm`}
           >
             {loading ? 'Carregando...' : 'Atualizar'}
           </button>
@@ -187,7 +188,7 @@ export const SecurityPanel: React.FC = () => {
 
         <div className="space-y-3">
           {authHistory.length === 0 ? (
-            <p className="text-gray-500 text-center py-8">Nenhum evento de autenticação registrado</p>
+            <p className={`${darkMode ? 'text-gray-400' : 'text-gray-500'} text-center py-8`}>Nenhum evento de autenticação registrado</p>
           ) : (
             authHistory.map((event, index) => (
               <div
@@ -229,6 +230,7 @@ export const SecurityPanel: React.FC = () => {
             ))
           )}
         </div>
+      </div>
       </div>
     </div>
   );
