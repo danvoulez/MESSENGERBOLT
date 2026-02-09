@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useApp } from '../contexts/AppContext';
+import { useToast } from '../contexts/ToastContext';
 import { 
   Search, 
   Send, 
@@ -28,12 +29,15 @@ export const WhatsAppScreen: React.FC = () => {
     addWhatsappMessage, 
     darkMode 
   } = useApp();
+  const { showToast } = useToast();
   
   const [input, setInput] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedTag, setSelectedTag] = useState<string>('Todos');
   const [showChatInfo, setShowChatInfo] = useState(false);
   const [showAISuggestions, setShowAISuggestions] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
+  const [showMenu, setShowMenu] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -147,6 +151,61 @@ export const WhatsAppScreen: React.FC = () => {
   const insertSuggestion = (suggestion: string) => {
     setInput(suggestion);
     setShowAISuggestions(false);
+  };
+
+  const handlePhoneCall = () => {
+    showToast(`Iniciando chamada de voz para ${selectedChat?.name}...`, 'info');
+    setTimeout(() => {
+      showToast('Chamada conectada!', 'success');
+    }, 2000);
+  };
+
+  const handleVideoCall = () => {
+    showToast(`Iniciando chamada de vídeo para ${selectedChat?.name}...`, 'info');
+    setTimeout(() => {
+      showToast('Chamada de vídeo conectada!', 'success');
+    }, 2000);
+  };
+
+  const handleAttachment = () => {
+    showToast('Seletor de arquivos será aberto em breve...', 'info');
+    // In a real app, this would open a file picker
+  };
+
+  const handleEmoji = () => {
+    showToast('Seletor de emojis será aberto em breve...', 'info');
+    // In a real app, this would open an emoji picker
+  };
+
+  const handleVoiceRecording = () => {
+    if (!isRecording) {
+      setIsRecording(true);
+      showToast('Gravando mensagem de voz...', 'info');
+    } else {
+      setIsRecording(false);
+      showToast('Mensagem de voz enviada!', 'success');
+      // In a real app, this would send the recorded audio
+    }
+  };
+
+  const handlePinChat = () => {
+    showToast(`Chat ${selectedChat?.name} fixado!`, 'success');
+  };
+
+  const handleArchiveChat = () => {
+    showToast(`Chat ${selectedChat?.name} arquivado!`, 'success');
+    setSelectedChat(null);
+  };
+
+  const handleDeleteChat = () => {
+    if (confirm(`Tem certeza que deseja excluir o chat com ${selectedChat?.name}?`)) {
+      showToast(`Chat ${selectedChat?.name} excluído!`, 'success');
+      setSelectedChat(null);
+    }
+  };
+
+  const toggleMessageStar = (messageId: string) => {
+    showToast('Mensagem marcada como favorita!', 'success');
   };
 
   if (!selectedChat) {
@@ -413,18 +472,59 @@ export const WhatsAppScreen: React.FC = () => {
             <button
               onClick={() => setShowChatInfo(!showChatInfo)}
               className={`p-2 ${darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'} rounded-lg transition-colors`}
+              title="Informações do chat"
             >
               <StickyNote size={20} className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`} />
             </button>
-            <button className={`p-2 ${darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'} rounded-lg transition-colors`}>
+            <button
+              onClick={handlePhoneCall}
+              className={`p-2 ${darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'} rounded-lg transition-colors`}
+              title="Chamada de voz"
+            >
               <Phone size={20} className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`} />
             </button>
-            <button className={`p-2 ${darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'} rounded-lg transition-colors`}>
+            <button
+              onClick={handleVideoCall}
+              className={`p-2 ${darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'} rounded-lg transition-colors`}
+              title="Chamada de vídeo"
+            >
               <Video size={20} className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`} />
             </button>
-            <button className={`p-2 ${darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'} rounded-lg transition-colors`}>
-              <MoreVertical size={20} className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`} />
-            </button>
+            <div className="relative">
+              <button
+                onClick={() => setShowMenu(!showMenu)}
+                className={`p-2 ${darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'} rounded-lg transition-colors`}
+                title="Mais opções"
+              >
+                <MoreVertical size={20} className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`} />
+              </button>
+              
+              {showMenu && (
+                <div className={`absolute right-0 mt-2 w-48 ${darkMode ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-200'} border rounded-lg shadow-lg z-10`}>
+                  <button
+                    onClick={() => { handlePinChat(); setShowMenu(false); }}
+                    className={`w-full text-left px-4 py-2 ${darkMode ? 'hover:bg-gray-600 text-gray-200' : 'hover:bg-gray-50 text-gray-800'} flex items-center space-x-2 transition-colors`}
+                  >
+                    <Pin size={16} />
+                    <span>Fixar chat</span>
+                  </button>
+                  <button
+                    onClick={() => { handleArchiveChat(); setShowMenu(false); }}
+                    className={`w-full text-left px-4 py-2 ${darkMode ? 'hover:bg-gray-600 text-gray-200' : 'hover:bg-gray-50 text-gray-800'} flex items-center space-x-2 transition-colors`}
+                  >
+                    <Archive size={16} />
+                    <span>Arquivar chat</span>
+                  </button>
+                  <button
+                    onClick={() => { handleDeleteChat(); setShowMenu(false); }}
+                    className={`w-full text-left px-4 py-2 ${darkMode ? 'hover:bg-gray-600 text-red-400' : 'hover:bg-red-50 text-red-600'} flex items-center space-x-2 transition-colors border-t ${darkMode ? 'border-gray-600' : 'border-gray-200'}`}
+                  >
+                    <Trash2 size={16} />
+                    <span>Excluir chat</span>
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
@@ -515,10 +615,18 @@ export const WhatsAppScreen: React.FC = () => {
 
                 {/* Message Actions (appear on hover) */}
                 <div className="absolute -top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex space-x-1">
-                  <button className={`p-1 ${darkMode ? 'bg-gray-600 hover:bg-gray-500' : 'bg-gray-200 hover:bg-gray-300'} rounded-full transition-colors`}>
-                    <Pin size={12} className={`${darkMode ? 'text-gray-300' : 'text-gray-600'}`} />
+                  <button
+                    onClick={() => toggleMessageStar(message.id)}
+                    className={`p-1 ${message.isPinned ? 'bg-yellow-400' : darkMode ? 'bg-gray-600 hover:bg-gray-500' : 'bg-gray-200 hover:bg-gray-300'} rounded-full transition-colors`}
+                    title="Marcar como favorita"
+                  >
+                    <Star size={12} className={`${message.isPinned ? 'text-white fill-white' : darkMode ? 'text-gray-300' : 'text-gray-600'}`} />
                   </button>
-                  <button className={`p-1 ${darkMode ? 'bg-gray-600 hover:bg-gray-500' : 'bg-gray-200 hover:bg-gray-300'} rounded-full transition-colors`}>
+                  <button
+                    onClick={() => showToast('Reação adicionada!', 'success')}
+                    className={`p-1 ${darkMode ? 'bg-gray-600 hover:bg-gray-500' : 'bg-gray-200 hover:bg-gray-300'} rounded-full transition-colors`}
+                    title="Reagir"
+                  >
                     <ThumbsUp size={12} className={`${darkMode ? 'text-gray-300' : 'text-gray-600'}`} />
                   </button>
                 </div>
@@ -551,7 +659,11 @@ export const WhatsAppScreen: React.FC = () => {
         {/* Input Area */}
         <div className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} border-t p-4`}>
           <div className="flex items-end space-x-3">
-            <button className={`p-2 ${darkMode ? 'text-gray-400 hover:text-gray-200' : 'text-gray-600 hover:text-gray-800'} transition-colors`}>
+            <button
+              onClick={handleAttachment}
+              className={`p-2 ${darkMode ? 'text-gray-400 hover:text-gray-200' : 'text-gray-600 hover:text-gray-800'} transition-colors`}
+              title="Anexar arquivo"
+            >
               <Paperclip size={20} />
             </button>
             
@@ -573,12 +685,17 @@ export const WhatsAppScreen: React.FC = () => {
                     ? 'text-blue-600' 
                     : darkMode ? 'text-gray-400 hover:text-blue-400' : 'text-gray-600 hover:text-blue-600'
                 } transition-colors`}
+                title="Sugestões da IA"
               >
                 <Zap size={16} />
               </button>
             </div>
             
-            <button className={`p-2 ${darkMode ? 'text-gray-400 hover:text-gray-200' : 'text-gray-600 hover:text-gray-800'} transition-colors`}>
+            <button
+              onClick={handleEmoji}
+              className={`p-2 ${darkMode ? 'text-gray-400 hover:text-gray-200' : 'text-gray-600 hover:text-gray-800'} transition-colors`}
+              title="Adicionar emoji"
+            >
               <Smile size={20} />
             </button>
             
@@ -586,12 +703,17 @@ export const WhatsAppScreen: React.FC = () => {
               <button
                 onClick={handleSend}
                 className="p-3 bg-green-600 hover:bg-green-700 text-white rounded-xl transition-colors"
+                title="Enviar mensagem"
               >
                 <Send size={20} />
               </button>
             ) : (
-              <button className={`p-3 ${darkMode ? 'text-gray-400 hover:text-gray-200' : 'text-gray-600 hover:text-gray-800'} transition-colors`}>
-                <Mic size={20} />
+              <button
+                onClick={handleVoiceRecording}
+                className={`p-3 ${isRecording ? 'bg-red-600 animate-pulse' : darkMode ? 'text-gray-400 hover:text-gray-200' : 'text-gray-600 hover:text-gray-800'} transition-colors rounded-xl`}
+                title={isRecording ? 'Parar gravação' : 'Gravar mensagem de voz'}
+              >
+                <Mic size={20} className={isRecording ? 'text-white' : ''} />
               </button>
             )}
           </div>

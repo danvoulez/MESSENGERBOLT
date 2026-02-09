@@ -47,6 +47,8 @@ interface AppContextType {
   // Messages
   messages: Message[]
   addMessage: (message: Omit<Message, 'id' | 'timestamp'>) => Promise<void>
+  deleteThread: (threadId: string) => void
+  clearAllMessages: () => void
   currentThread: string | null
   setCurrentThread: (threadId: string | null) => void
   
@@ -247,6 +249,21 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     // TODO: Save to database when circles system is active
   }
 
+  // Delete messages in a thread
+  const deleteThread = (threadId: string) => {
+    setMessages(prev => prev.filter(msg => msg.threadId !== threadId))
+    // If current thread is being deleted, reset to main chat
+    if (currentThread === threadId) {
+      setCurrentThread(null)
+    }
+  }
+
+  // Clear all messages
+  const clearAllMessages = () => {
+    setMessages([])
+    setCurrentThread(null)
+  }
+
   // Update tasks
   const updateTasks = (newTasks: Task[]) => {
     setTasks(newTasks)
@@ -341,6 +358,8 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     // Messages
     messages,
     addMessage,
+    deleteThread,
+    clearAllMessages,
     currentThread,
     setCurrentThread,
     

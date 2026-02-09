@@ -3,7 +3,7 @@ import { useApp } from '../contexts/AppContext';
 import { Menu, X, User, Clock, CreditCard, FileText, Shield, Activity, ChevronLeft, MessageSquare, Trash2 } from 'lucide-react';
 
 export const LeftPanel: React.FC = () => {
-  const { leftPanelOpen, setLeftPanelOpen, rightPanelOpen, userProfile, setCurrentThread, addMessage, darkMode, currentScreen, messages } = useApp();
+  const { leftPanelOpen, setLeftPanelOpen, rightPanelOpen, userProfile, setCurrentThread, addMessage, darkMode, currentScreen, messages, deleteThread, clearAllMessages } = useApp();
   const [startX, setStartX] = useState(0);
   const [currentX, setCurrentX] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
@@ -112,8 +112,13 @@ Precisa de ajuda com algum acesso ou permissão?`
 
   const clearChatHistory = () => {
     if (confirm('Tem certeza que deseja limpar todo o histórico do chat?')) {
-      // This would need to be implemented in the context
-      console.log('Clear chat history');
+      clearAllMessages()
+    }
+  }
+
+  const handleDeleteThread = (thread: string) => {
+    if (confirm(`Tem certeza que deseja excluir a conversa "${thread}"?`)) {
+      deleteThread(thread)
     }
   };
 
@@ -323,14 +328,25 @@ Precisa de ajuda com algum acesso ou permissão?`
                   </button>
                   
                   {getChatThreads().map((thread) => (
-                    <button
+                    <div
                       key={thread}
-                      onClick={() => setCurrentThread(thread)}
-                      className={`w-full flex items-center space-x-2 p-2 rounded-lg ${darkMode ? 'hover:bg-gray-700 text-gray-300' : 'hover:bg-gray-100 text-gray-700'} transition-colors text-left text-sm`}
+                      className={`w-full flex items-center space-x-2 p-2 rounded-lg ${darkMode ? 'hover:bg-gray-700 text-gray-300' : 'hover:bg-gray-100 text-gray-700'} transition-colors text-left text-sm group`}
                     >
                       <MessageSquare size={16} className={`${darkMode ? 'text-gray-500' : 'text-gray-400'}`} />
-                      <span className="truncate">{thread}</span>
-                    </button>
+                      <button
+                        onClick={() => setCurrentThread(thread)}
+                        className="flex-1 text-left truncate"
+                      >
+                        {thread}
+                      </button>
+                      <button
+                        onClick={() => handleDeleteThread(thread)}
+                        className={`opacity-0 group-hover:opacity-100 p-1 ${darkMode ? 'hover:bg-red-800 text-red-400' : 'hover:bg-red-100 text-red-600'} rounded transition-all`}
+                        title="Excluir conversa"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
                   ))}
                 </div>
               </div>
