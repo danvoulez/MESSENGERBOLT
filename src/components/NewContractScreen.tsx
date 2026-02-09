@@ -97,7 +97,9 @@ export const NewContractScreen: React.FC = () => {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `contrato_${formData.who.replace(/\s+/g, '_')}_${Date.now()}.txt`;
+    // Sanitize filename by removing special characters
+    const sanitizedName = formData.who.replace(/[^a-zA-Z0-9\s]/g, '').replace(/\s+/g, '_');
+    a.download = `contrato_${sanitizedName}_${Date.now()}.txt`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -116,10 +118,13 @@ export const NewContractScreen: React.FC = () => {
         });
         showToast('Contrato compartilhado!', 'success');
       } catch (error) {
-        // User cancelled share or error occurred
-        if ((error as Error).name !== 'AbortError') {
-          handleCopyToClipboard(contractText);
+        // User cancelled share
+        if ((error as Error).name === 'AbortError') {
+          return;
         }
+        // Fallback to clipboard for other errors
+        console.error('Share error:', error);
+        handleCopyToClipboard(contractText);
       }
     } else {
       handleCopyToClipboard(contractText);

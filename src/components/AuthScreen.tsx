@@ -20,8 +20,25 @@ export const AuthScreen: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setLoading(true)
     setMessage('')
+
+    // Validate before setting loading state
+    if (!isLogin) {
+      if (formData.password !== formData.confirmPassword) {
+        const msg = 'As senhas não coincidem'
+        setMessage(msg)
+        showToast(msg, 'error')
+        return
+      }
+      if (formData.password.length < 6) {
+        const msg = 'A senha deve ter pelo menos 6 caracteres'
+        setMessage(msg)
+        showToast(msg, 'error')
+        return
+      }
+    }
+
+    setLoading(true)
 
     try {
       if (isLogin) {
@@ -33,16 +50,6 @@ export const AuthScreen: React.FC = () => {
           showToast('Login realizado com sucesso!', 'success')
         }
       } else {
-        if (formData.password !== formData.confirmPassword) {
-          setMessage('As senhas não coincidem')
-          showToast('As senhas não coincidem', 'error')
-          return
-        }
-        if (formData.password.length < 6) {
-          setMessage('A senha deve ter pelo menos 6 caracteres')
-          showToast('A senha deve ter pelo menos 6 caracteres', 'error')
-          return
-        }
         const { error } = await signUp(formData.email, formData.password)
         if (error) {
           setMessage(error.message)
