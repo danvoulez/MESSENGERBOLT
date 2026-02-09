@@ -83,39 +83,48 @@ export const ChatScreen: React.FC = () => {
   return (
     <div className={`flex flex-col h-screen ${darkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
       {/* Header */}
-      <div className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} border-b px-6 py-4 flex items-center justify-between`}>
-        <div className="flex items-center space-x-3">
-          <div className="relative">
-            <div className={`w-10 h-10 ${darkMode ? 'bg-gradient-to-r from-blue-600 to-purple-600' : 'bg-gradient-to-r from-blue-500 to-purple-500'} rounded-full flex items-center justify-center`}>
+      <div className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} border-b px-3 sm:px-4 md:px-6 py-3 sm:py-4 flex items-center justify-between flex-shrink-0`}>
+        <div className="flex items-center space-x-3 flex-1 min-w-0">
+          <div className="relative flex-shrink-0">
+            <div className={`w-8 h-8 sm:w-10 sm:h-10 ${darkMode ? 'bg-gradient-to-r from-blue-600 to-purple-600' : 'bg-gradient-to-r from-blue-500 to-purple-500'} rounded-full flex items-center justify-center`}>
               <MessageSquare size={20} className="text-white" />
             </div>
             <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>
           </div>
-          <div>
-            <h1 className={`text-lg font-semibold ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>
+          <div className="flex-1 min-w-0">
+            <h1 className={`text-base sm:text-lg font-semibold truncate ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>
               {getThreadTitle()}
             </h1>
-            <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+            <p className={`text-xs sm:text-sm truncate ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
               {currentThread ? 'Conversa específica' : 'Assistente IA • Online'}
             </p>
           </div>
         </div>
         
-        <div className="flex items-center space-x-2">
-          <button className={`p-2 ${darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'} rounded-lg transition-colors`}>
+        <div className="flex items-center space-x-1 sm:space-x-2 flex-shrink-0">
+          <button 
+            aria-label="Documentos"
+            className={`min-w-[44px] min-h-[44px] p-2 sm:p-2 ${darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'} rounded-lg transition-colors`}
+          >
             <FileText size={20} className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`} />
           </button>
-          <button className={`p-2 ${darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'} rounded-lg transition-colors`}>
+          <button 
+            aria-label="Calendário"
+            className={`min-w-[44px] min-h-[44px] p-2 sm:p-2 ${darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'} rounded-lg transition-colors`}
+          >
             <Calendar size={20} className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`} />
           </button>
-          <button className={`p-2 ${darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'} rounded-lg transition-colors`}>
+          <button 
+            aria-label="Perfil"
+            className={`min-w-[44px] min-h-[44px] p-2 sm:p-2 ${darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'} rounded-lg transition-colors`}
+          >
             <User size={20} className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`} />
           </button>
         </div>
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-6 space-y-4">
+      <div className="flex-1 overflow-y-auto px-3 sm:px-4 md:px-6 py-4 space-y-4 pb-20 sm:pb-24">
         {messages.length === 0 && !currentThread && (
           <div className="text-center py-12">
             <div className={`w-16 h-16 ${darkMode ? 'bg-gradient-to-r from-blue-600 to-purple-600' : 'bg-gradient-to-r from-blue-500 to-purple-500'} rounded-full mx-auto mb-4 flex items-center justify-center`}>
@@ -124,7 +133,7 @@ export const ChatScreen: React.FC = () => {
             <h3 className={`text-xl font-semibold mb-2 ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>
               Assistente IA do Minicontratos
             </h3>
-            <p className={`${darkMode ? 'text-gray-400' : 'text-gray-600'} max-w-md mx-auto`}>
+            <p className={`${darkMode ? 'text-gray-400' : 'text-gray-600'} max-w-md mx-auto px-4`}>
               Posso ajudá-lo com contratos, tarefas, WhatsApp e muito mais. Como posso ajudar hoje?
             </p>
           </div>
@@ -135,12 +144,12 @@ export const ChatScreen: React.FC = () => {
             key={message.id}
             className={`flex ${message.author === 'user' ? 'justify-end' : 'justify-start'}`}
           >
-            <div className={`max-w-xs lg:max-w-md xl:max-w-lg ${
+            <div className={`max-w-[85%] sm:max-w-xs md:max-w-md lg:max-w-lg ${
               message.author === 'user'
                 ? darkMode ? 'bg-blue-600 text-white' : 'bg-blue-600 text-white'
                 : darkMode ? 'bg-gray-700 text-gray-200' : 'bg-white text-gray-800'
             } rounded-2xl px-4 py-3 shadow-sm`}>
-              <div className="whitespace-pre-wrap text-sm leading-relaxed">
+              <div className="whitespace-pre-wrap text-sm leading-relaxed break-words">
                 {message.content}
               </div>
               <div className={`text-xs mt-2 ${
@@ -175,15 +184,18 @@ export const ChatScreen: React.FC = () => {
       </div>
 
       {/* Input */}
-      <div className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} border-t p-4`}>
-        <div className="flex items-end space-x-3">
+      <div className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} border-t p-3 sm:p-4 flex-shrink-0`}
+        style={{ paddingBottom: 'max(1rem, env(safe-area-inset-bottom))' }}
+      >
+        <div className="flex items-end space-x-2 sm:space-x-3">
           <div className="flex-1">
             <textarea
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyPress={handleKeyPress}
               placeholder="Digite sua mensagem..."
-              className={`w-full ${darkMode ? 'bg-gray-700 border-gray-600 text-gray-200 placeholder-gray-400' : 'bg-gray-50 border-gray-200 text-gray-800 placeholder-gray-500'} border rounded-xl px-4 py-3 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors`}
+              aria-label="Mensagem"
+              className={`w-full ${darkMode ? 'bg-gray-700 border-gray-600 text-gray-200 placeholder-gray-400' : 'bg-gray-50 border-gray-200 text-gray-800 placeholder-gray-500'} border rounded-xl px-3 sm:px-4 py-3 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors`}
               rows={1}
               style={{ minHeight: '44px', maxHeight: '120px' }}
             />
@@ -191,11 +203,12 @@ export const ChatScreen: React.FC = () => {
           <button
             onClick={handleSend}
             disabled={!input.trim()}
-            className={`p-3 ${
+            aria-label="Enviar mensagem"
+            className={`min-w-[44px] min-h-[44px] p-3 ${
               input.trim()
                 ? 'bg-blue-600 hover:bg-blue-700 text-white'
                 : darkMode ? 'bg-gray-700 text-gray-500' : 'bg-gray-200 text-gray-400'
-            } rounded-xl transition-colors disabled:cursor-not-allowed`}
+            } rounded-xl transition-colors disabled:cursor-not-allowed flex-shrink-0`}
           >
             <Send size={20} />
           </button>

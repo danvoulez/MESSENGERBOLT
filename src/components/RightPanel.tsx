@@ -50,7 +50,8 @@ export const RightPanel: React.FC = () => {
     return (
       <button
         onClick={() => setRightPanelOpen(true)}
-        className={`fixed top-4 right-4 z-50 ${darkMode ? 'bg-gray-800 text-gray-200 border-gray-600' : 'bg-white text-gray-700 border-gray-200'} p-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 border`}
+        aria-label="Abrir painel de tarefas"
+        className={`fixed top-4 right-4 z-[60] ${darkMode ? 'bg-gray-800 text-gray-200 border-gray-600' : 'bg-white text-gray-700 border-gray-200'} min-w-[44px] min-h-[44px] p-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 border`}
       >
         {hasUrgentTasks ? (
           <div className="w-5 h-5 bg-red-500 rounded-full animate-pulse shadow-lg"></div>
@@ -267,21 +268,24 @@ export const RightPanel: React.FC = () => {
   const { title, subtitle, content } = getContent();
 
   return (
-    <div className={`fixed right-0 top-0 h-full w-80 ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} shadow-2xl z-40 flex flex-col transition-transform duration-300 ease-out ${rightPanelOpen ? 'translate-x-0' : 'translate-x-full'}`}>
-      <div className={`p-4 border-b ${darkMode ? 'border-gray-700' : 'border-gray-200'} flex items-center justify-between`}>
-        <div>
-          <h3 className={`font-semibold ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>{title}</h3>
-          <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>{subtitle}</p>
+    <div className={`fixed right-0 top-0 h-full w-full sm:w-80 lg:w-96 ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} shadow-2xl z-50 flex flex-col transition-transform duration-300 ease-out ${rightPanelOpen ? 'translate-x-0' : 'translate-x-full'}`}
+      style={{ maxWidth: '100vw' }}
+    >
+      <div className={`p-3 sm:p-4 border-b ${darkMode ? 'border-gray-700' : 'border-gray-200'} flex items-center justify-between`}>
+        <div className="flex-1 min-w-0">
+          <h3 className={`font-semibold truncate ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>{title}</h3>
+          <p className={`text-sm truncate ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>{subtitle}</p>
         </div>
         <button
           onClick={() => setRightPanelOpen(false)}
-          className={`p-2 ${darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'} rounded-lg transition-colors`}
+          aria-label="Fechar painel"
+          className={`min-w-[44px] min-h-[44px] p-2 ${darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'} rounded-lg transition-colors flex-shrink-0 ml-2`}
         >
-          <ChevronRight size={16} className={`${darkMode ? 'text-gray-400' : 'text-gray-400'}`} />
+          <ChevronRight size={18} className={`${darkMode ? 'text-gray-400' : 'text-gray-400'}`} />
         </button>
       </div>
       
-      <div className="flex-1 p-4 overflow-y-auto">
+      <div className="flex-1 p-3 sm:p-4 overflow-y-auto">
         {content}
       </div>
     </div>
