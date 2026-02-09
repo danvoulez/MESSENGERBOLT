@@ -1,0 +1,15 @@
+# Notification Sound Placeholder
+
+This is a placeholder file indicating where a notification sound file should be placed.
+To enable notification sounds:
+
+1. Add a notification.mp3 file to the /public directory
+2. Ensure the file is a valid MP3 audio file
+3. Keep the file size small (< 100KB) for quick loading
+
+The notification sound will play when:
+- New WhatsApp messages arrive from clients (not own messages)
+- The user is currently viewing the WhatsApp screen
+
+Note: Audio autoplay may be blocked by browser policies until the user
+interacts with the page.
