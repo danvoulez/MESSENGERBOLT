@@ -1,6 +1,7 @@
 import React from 'react'
 import { AuthProvider, useAuth } from './contexts/AuthContext'
 import { AppProvider } from './contexts/AppContext'
+import { ToastProvider } from './contexts/ToastContext'
 import { AuthScreen } from './components/AuthScreen'
 import { OnboardingScreen } from './components/OnboardingScreen'
 import { ChatScreen } from './components/ChatScreen'
@@ -71,9 +72,11 @@ const AppContent: React.FC = () => {
 const App: React.FC = () => {
   return (
     <AuthProvider>
-      <AppProvider>
-        <AppContent />
-      </AppProvider>
+      <ToastProvider>
+        <AppProvider>
+          <AppContent />
+        </AppProvider>
+      </ToastProvider>
     </AuthProvider>
   )
 }

@@ -109,11 +109,20 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   //   )
   // }
 
-  // UI State
+  // UI State - load from localStorage where applicable
   const [currentScreen, setCurrentScreen] = useState<Screen>('chat')
-  const [darkMode, setDarkMode] = useState(false)
-  const [leftPanelOpen, setLeftPanelOpen] = useState(true)
-  const [rightPanelOpen, setRightPanelOpen] = useState(true)
+  const [darkMode, setDarkMode] = useState(() => {
+    const saved = localStorage.getItem('darkMode')
+    return saved ? JSON.parse(saved) : false
+  })
+  const [leftPanelOpen, setLeftPanelOpen] = useState(() => {
+    const saved = localStorage.getItem('leftPanelOpen')
+    return saved ? JSON.parse(saved) : true
+  })
+  const [rightPanelOpen, setRightPanelOpen] = useState(() => {
+    const saved = localStorage.getItem('rightPanelOpen')
+    return saved ? JSON.parse(saved) : true
+  })
   
   // Messages
   const [messages, setMessages] = useState<Message[]>([])
@@ -206,6 +215,19 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
 
     loadInitialData()
   }, [])
+
+  // Persist UI preferences to localStorage
+  useEffect(() => {
+    localStorage.setItem('darkMode', JSON.stringify(darkMode))
+  }, [darkMode])
+
+  useEffect(() => {
+    localStorage.setItem('leftPanelOpen', JSON.stringify(leftPanelOpen))
+  }, [leftPanelOpen])
+
+  useEffect(() => {
+    localStorage.setItem('rightPanelOpen', JSON.stringify(rightPanelOpen))
+  }, [rightPanelOpen])
 
   // Mock function for now
   const loadUserCircles = async () => {
