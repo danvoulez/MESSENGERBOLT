@@ -108,7 +108,7 @@ interface AppProviderProps {
 
 export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   const { user } = useAuth()
-  const { loadMessages, loadContracts, loadWhatsAppChats } = useDatabase()
+  const { getMessages, getContracts, getWhatsAppChats } = useDatabase()
   
   // WhatsApp state for selectedChat
   const [selectedChat, setSelectedChat] = useState<WhatsAppChat | null>(null)
@@ -215,9 +215,9 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     const loadInitialData = async () => {
       try {
         const [messagesData, contractsData, chatsData] = await Promise.all([
-          loadMessages(),
-          loadContracts(),
-          loadWhatsAppChats()
+          getMessages(),
+          getContracts(),
+          getWhatsAppChats()
         ])
         
         if (messagesData) setMessages(messagesData)
