@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import { useToast } from '../contexts/ToastContext';
 import { Shield, Clock, AlertTriangle, Key, Eye, EyeOff, LogOut } from 'lucide-react';
 
 export const SecurityPanel: React.FC = () => {
   const { user, claims, getAuthHistory, revokeToken } = useAuth();
+  const { showToast } = useToast();
   const [authHistory, setAuthHistory] = useState<any[]>([]);
   const [showTokenDetails, setShowTokenDetails] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -17,8 +19,10 @@ export const SecurityPanel: React.FC = () => {
     try {
       const history = await getAuthHistory();
       setAuthHistory(history.slice(0, 10)); // Últimos 10 eventos
+      showToast('Histórico de autenticação atualizado', 'success', 2000);
     } catch (error) {
       console.error('Erro ao carregar histórico:', error);
+      showToast('Erro ao carregar histórico de autenticação', 'error');
     } finally {
       setLoading(false);
     }
@@ -26,7 +30,12 @@ export const SecurityPanel: React.FC = () => {
 
   const handleRevokeToken = async (reason: string) => {
     if (confirm(`Tem certeza que deseja revogar o token? Motivo: ${reason}`)) {
-      await revokeToken(reason);
+      try {
+        await revokeToken(reason);
+        showToast('Token revogado com sucesso!', 'success');
+      } catch (error) {
+        showToast('Erro ao revogar token', 'error');
+      }
     }
   };
 

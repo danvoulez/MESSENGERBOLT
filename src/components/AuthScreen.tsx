@@ -1,11 +1,13 @@
 import React, { useState } from 'react'
 import { useAuth } from '../contexts/AuthContext'
 import { useApp } from '../contexts/AppContext'
+import { useToast } from '../contexts/ToastContext'
 import { Mail, Lock, User, Eye, EyeOff, LogIn, UserPlus } from 'lucide-react'
 
 export const AuthScreen: React.FC = () => {
   const { signIn, signUp, resetPassword } = useAuth()
   const { darkMode } = useApp()
+  const { showToast } = useToast()
   const [isLogin, setIsLogin] = useState(true)
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -26,21 +28,35 @@ export const AuthScreen: React.FC = () => {
         const { error } = await signIn(formData.email, formData.password)
         if (error) {
           setMessage(error.message)
+          showToast(error.message || 'Erro ao fazer login', 'error')
+        } else {
+          showToast('Login realizado com sucesso!', 'success')
         }
       } else {
         if (formData.password !== formData.confirmPassword) {
           setMessage('As senhas não coincidem')
+          showToast('As senhas não coincidem', 'error')
+          return
+        }
+        if (formData.password.length < 6) {
+          setMessage('A senha deve ter pelo menos 6 caracteres')
+          showToast('A senha deve ter pelo menos 6 caracteres', 'error')
           return
         }
         const { error } = await signUp(formData.email, formData.password)
         if (error) {
           setMessage(error.message)
+          showToast(error.message || 'Erro ao criar conta', 'error')
         } else {
-          setMessage('Verifique seu email para confirmar a conta!')
+          const successMsg = 'Conta criada! Verifique seu email para confirmar.'
+          setMessage(successMsg)
+          showToast(successMsg, 'success')
         }
       }
     } catch (error) {
-      setMessage('Erro inesperado. Tente novamente.')
+      const errorMsg = 'Erro inesperado. Tente novamente.'
+      setMessage(errorMsg)
+      showToast(errorMsg, 'error')
     } finally {
       setLoading(false)
     }
@@ -48,7 +64,9 @@ export const AuthScreen: React.FC = () => {
 
   const handleResetPassword = async () => {
     if (!formData.email) {
-      setMessage('Digite seu email primeiro')
+      const msg = 'Digite seu email primeiro'
+      setMessage(msg)
+      showToast(msg, 'warning')
       return
     }
     
@@ -56,10 +74,20 @@ export const AuthScreen: React.FC = () => {
     const { error } = await resetPassword(formData.email)
     if (error) {
       setMessage(error.message)
+      showToast(error.message || 'Erro ao enviar email', 'error')
     } else {
-      setMessage('Email de recuperação enviado!')
+      const successMsg = 'Email de recuperação enviado! Verifique sua caixa de entrada.'
+      setMessage(successMsg)
+      showToast(successMsg, 'success')
     }
     setLoading(false)
+  }
+
+  const toggleMode = () => {
+    setIsLogin(!isLogin)
+    setMessage('')
+    setFormData({ email: '', password: '', confirmPassword: '' })
+    showToast(isLogin ? 'Modo: Criar Conta' : 'Modo: Login', 'info', 2000)
   }
 
   return (
@@ -201,11 +229,7 @@ export const AuthScreen: React.FC = () => {
           <div className="text-center">
             <button
               type="button"
-              onClick={() => {
-                setIsLogin(!isLogin)
-                setMessage('')
-                setFormData({ email: '', password: '', confirmPassword: '' })
-              }}
+              onClick={toggleMode}
               className="text-gray-600 hover:text-gray-800 text-sm"
             >
               {isLogin ? 'Não tem conta? Criar uma' : 'Já tem conta? Entrar'}
