@@ -20,12 +20,16 @@ const AppContent: React.FC = () => {
 
   // Close panels on mobile when screen changes
   useEffect(() => {
-    const isMobile = window.innerWidth < 768
-    if (isMobile && (leftPanelOpen || rightPanelOpen)) {
-      setLeftPanelOpen(false)
-      setRightPanelOpen(false)
+    const checkAndClosePanels = () => {
+      const isMobile = window.innerWidth < 768
+      if (isMobile && (leftPanelOpen || rightPanelOpen)) {
+        setLeftPanelOpen(false)
+        setRightPanelOpen(false)
+      }
     }
-  }, [currentScreen])
+
+    checkAndClosePanels()
+  }, [currentScreen, leftPanelOpen, rightPanelOpen, setLeftPanelOpen, setRightPanelOpen])
 
   // BYPASS AUTH - Go straight to main app
   // if (loading) {
