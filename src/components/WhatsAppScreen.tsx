@@ -214,20 +214,21 @@ export const WhatsAppScreen: React.FC = () => {
         {/* Chat List */}
         <div className={`w-full max-w-md ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} border-r flex flex-col`}>
           {/* Header */}
-          <div className={`p-4 ${darkMode ? 'border-gray-700' : 'border-gray-200'} border-b`}>
-            <h1 className={`text-xl font-semibold mb-4 ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>
+          <div className={`p-3 sm:p-4 ${darkMode ? 'border-gray-700' : 'border-gray-200'} border-b flex-shrink-0`}>
+            <h1 className={`text-lg sm:text-xl font-semibold mb-3 sm:mb-4 truncate ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>
               WhatsApp Business
             </h1>
             
             {/* Search */}
-            <div className="relative mb-4">
+            <div className="relative mb-3 sm:mb-4">
               <Search size={20} className={`absolute left-3 top-1/2 transform -translate-y-1/2 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`} />
               <input
                 type="text"
                 placeholder="Buscar conversas..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className={`w-full pl-10 pr-4 py-2 ${darkMode ? 'bg-gray-700 border-gray-600 text-gray-200 placeholder-gray-400' : 'bg-gray-50 border-gray-200 text-gray-800 placeholder-gray-500'} border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent`}
+                aria-label="Buscar conversas"
+                className={`w-full pl-10 pr-4 py-2 min-h-[44px] ${darkMode ? 'bg-gray-700 border-gray-600 text-gray-200 placeholder-gray-400' : 'bg-gray-50 border-gray-200 text-gray-800 placeholder-gray-500'} border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent`}
               />
             </div>
 
@@ -237,7 +238,8 @@ export const WhatsAppScreen: React.FC = () => {
                 <button
                   key={tag}
                   onClick={() => setSelectedTag(tag)}
-                  className={`px-3 py-1 text-xs rounded-full transition-colors ${
+                  aria-label={`Filtrar por ${tag}`}
+                  className={`px-3 py-1 text-xs rounded-full transition-colors min-h-[32px] ${
                     selectedTag === tag
                       ? 'bg-green-600 text-white'
                       : darkMode 
@@ -252,39 +254,39 @@ export const WhatsAppScreen: React.FC = () => {
           </div>
 
           {/* Chat List */}
-          <div className="flex-1 overflow-y-auto">
+          <div className="flex-1 overflow-y-auto pb-20 sm:pb-24">
             {filteredChats.map((chat) => (
               <div
                 key={chat.id}
                 onClick={() => setSelectedChat(chat)}
-                className={`p-4 cursor-pointer transition-colors ${
+                className={`p-3 sm:p-4 cursor-pointer transition-colors min-h-[72px] ${
                   darkMode ? 'hover:bg-gray-700 border-gray-700' : 'hover:bg-gray-50 border-gray-100'
                 } border-b`}
               >
                 <div className="flex items-center space-x-3">
-                  <div className="relative">
+                  <div className="relative flex-shrink-0">
                     <img
                       src={chat.avatar}
                       alt={chat.name}
-                      className="w-12 h-12 rounded-full object-cover"
+                      className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover"
                     />
                     <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>
                   </div>
                   
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between mb-1">
-                      <div className="flex items-center space-x-2">
+                      <div className="flex items-center space-x-2 flex-1 min-w-0">
                         <h3 className={`font-semibold truncate ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>
                           {chat.name}
                         </h3>
                         {getPriorityIcon(chat.priority || 'low')}
                       </div>
-                      <span className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                      <span className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'} flex-shrink-0 ml-2`}>
                         {formatLastSeen(chat.timestamp)}
                       </span>
                     </div>
                     
-                    <p className={`text-sm truncate ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                    <p className={`text-xs sm:text-sm truncate ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
                       {chat.lastMessage}
                     </p>
                     
@@ -314,15 +316,15 @@ export const WhatsAppScreen: React.FC = () => {
         </div>
 
         {/* Empty State */}
-        <div className={`flex-1 flex items-center justify-center ${darkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
-          <div className="text-center">
-            <div className={`w-24 h-24 ${darkMode ? 'bg-gray-700' : 'bg-gray-200'} rounded-full mx-auto mb-4 flex items-center justify-center`}>
+        <div className={`flex-1 flex items-center justify-center ${darkMode ? 'bg-gray-900' : 'bg-gray-50'} pb-20 sm:pb-24`}>
+          <div className="text-center px-4">
+            <div className={`w-20 h-20 sm:w-24 sm:h-24 ${darkMode ? 'bg-gray-700' : 'bg-gray-200'} rounded-full mx-auto mb-4 flex items-center justify-center`}>
               <Search size={32} className={`${darkMode ? 'text-gray-500' : 'text-gray-400'}`} />
             </div>
-            <h3 className={`text-xl font-semibold mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+            <h3 className={`text-lg sm:text-xl font-semibold mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
               Selecione uma conversa
             </h3>
-            <p className={`${darkMode ? 'text-gray-500' : 'text-gray-500'}`}>
+            <p className={`text-sm ${darkMode ? 'text-gray-500' : 'text-gray-500'}`}>
               Escolha um chat da lista para começar a conversar
             </p>
           </div>
@@ -437,64 +439,69 @@ export const WhatsAppScreen: React.FC = () => {
       {/* Chat Area */}
       <div className="flex-1 flex flex-col">
         {/* Chat Header */}
-        <div className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} border-b px-4 py-3 flex items-center justify-between`}>
-          <div className="flex items-center space-x-3">
+        <div className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} border-b px-3 sm:px-4 py-3 flex items-center justify-between flex-shrink-0`}>
+          <div className="flex items-center space-x-2 sm:space-x-3 flex-1 min-w-0">
             <button
               onClick={() => setSelectedChat(null)}
-              className={`lg:hidden p-2 ${darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'} rounded-lg transition-colors`}
+              aria-label="Voltar"
+              className={`lg:hidden min-w-[44px] min-h-[44px] p-2 ${darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'} rounded-lg transition-colors flex-shrink-0`}
             >
               <ArrowLeft size={20} className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`} />
             </button>
             
-            <div className="relative">
+            <div className="relative flex-shrink-0">
               <img
                 src={selectedChat.avatar}
                 alt={selectedChat.name}
-                className="w-10 h-10 rounded-full object-cover"
+                className="w-8 h-8 sm:w-10 sm:h-10 rounded-full object-cover"
               />
               <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>
             </div>
             
-            <div>
+            <div className="flex-1 min-w-0">
               <div className="flex items-center space-x-2">
-                <h2 className={`font-semibold ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>
+                <h2 className={`font-semibold text-sm sm:text-base truncate ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>
                   {selectedChat.name}
                 </h2>
                 {getPriorityIcon(selectedChat.priority || 'low')}
               </div>
-              <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                Online • Visto por último {formatLastSeen(selectedChat.timestamp)}
+              <p className={`text-xs sm:text-sm truncate ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                Online • Visto {formatLastSeen(selectedChat.timestamp)}
               </p>
             </div>
           </div>
           
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-1 flex-shrink-0">
             <button
               onClick={() => setShowChatInfo(!showChatInfo)}
-              className={`p-2 ${darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'} rounded-lg transition-colors`}
+              aria-label="Informações do chat"
               title="Informações do chat"
+              className={`min-w-[44px] min-h-[44px] p-2 ${darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'} rounded-lg transition-colors hidden sm:flex items-center justify-center`}
             >
               <StickyNote size={20} className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`} />
             </button>
             <button
               onClick={handlePhoneCall}
-              className={`p-2 ${darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'} rounded-lg transition-colors`}
+              aria-label="Chamada de voz"
               title="Chamada de voz"
+              className={`min-w-[44px] min-h-[44px] p-2 ${darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'} rounded-lg transition-colors hidden sm:flex items-center justify-center`}
             >
               <Phone size={20} className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`} />
             </button>
             <button
               onClick={handleVideoCall}
-              className={`p-2 ${darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'} rounded-lg transition-colors`}
+              aria-label="Chamada de vídeo"
               title="Chamada de vídeo"
+              className={`min-w-[44px] min-h-[44px] p-2 ${darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'} rounded-lg transition-colors hidden sm:flex items-center justify-center`}
             >
               <Video size={20} className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`} />
             </button>
             <div className="relative">
               <button
                 onClick={() => setShowMenu(!showMenu)}
-                className={`p-2 ${darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'} rounded-lg transition-colors`}
+                aria-label="Mais opções"
                 title="Mais opções"
+                className={`min-w-[44px] min-h-[44px] p-2 ${darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'} rounded-lg transition-colors`}
               >
                 <MoreVertical size={20} className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`} />
               </button>
@@ -503,21 +510,21 @@ export const WhatsAppScreen: React.FC = () => {
                 <div className={`absolute right-0 mt-2 w-48 ${darkMode ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-200'} border rounded-lg shadow-lg z-10`}>
                   <button
                     onClick={() => { handlePinChat(); setShowMenu(false); }}
-                    className={`w-full text-left px-4 py-2 ${darkMode ? 'hover:bg-gray-600 text-gray-200' : 'hover:bg-gray-50 text-gray-800'} flex items-center space-x-2 transition-colors`}
+                    className={`w-full text-left px-4 py-2 min-h-[44px] ${darkMode ? 'hover:bg-gray-600 text-gray-200' : 'hover:bg-gray-50 text-gray-800'} flex items-center space-x-2 transition-colors`}
                   >
                     <Pin size={16} />
                     <span>Fixar chat</span>
                   </button>
                   <button
                     onClick={() => { handleArchiveChat(); setShowMenu(false); }}
-                    className={`w-full text-left px-4 py-2 ${darkMode ? 'hover:bg-gray-600 text-gray-200' : 'hover:bg-gray-50 text-gray-800'} flex items-center space-x-2 transition-colors`}
+                    className={`w-full text-left px-4 py-2 min-h-[44px] ${darkMode ? 'hover:bg-gray-600 text-gray-200' : 'hover:bg-gray-50 text-gray-800'} flex items-center space-x-2 transition-colors`}
                   >
                     <Archive size={16} />
                     <span>Arquivar chat</span>
                   </button>
                   <button
                     onClick={() => { handleDeleteChat(); setShowMenu(false); }}
-                    className={`w-full text-left px-4 py-2 ${darkMode ? 'hover:bg-gray-600 text-red-400' : 'hover:bg-red-50 text-red-600'} flex items-center space-x-2 transition-colors border-t ${darkMode ? 'border-gray-600' : 'border-gray-200'}`}
+                    className={`w-full text-left px-4 py-2 min-h-[44px] ${darkMode ? 'hover:bg-gray-600 text-red-400' : 'hover:bg-red-50 text-red-600'} flex items-center space-x-2 transition-colors border-t ${darkMode ? 'border-gray-600' : 'border-gray-200'}`}
                   >
                     <Trash2 size={16} />
                     <span>Excluir chat</span>
@@ -581,13 +588,13 @@ export const WhatsAppScreen: React.FC = () => {
         )}
 
         {/* Messages */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-3">
+        <div className="flex-1 overflow-y-auto px-3 sm:px-4 py-4 space-y-3 pb-20 sm:pb-24">
           {whatsappMessages.map((message) => (
             <div
               key={message.id}
               className={`flex ${message.isOwn ? 'justify-end' : 'justify-start'} group`}
             >
-              <div className={`max-w-xs lg:max-w-md xl:max-w-lg relative ${
+              <div className={`max-w-[85%] sm:max-w-xs md:max-w-md lg:max-w-lg relative ${
                 message.isOwn
                   ? 'bg-green-600 text-white'
                   : darkMode ? 'bg-gray-700 text-gray-200' : 'bg-white text-gray-800'
@@ -598,7 +605,7 @@ export const WhatsAppScreen: React.FC = () => {
                   </div>
                 )}
                 
-                <div className="whitespace-pre-wrap text-sm leading-relaxed">
+                <div className="whitespace-pre-wrap text-sm leading-relaxed break-words">
                   {message.content}
                 </div>
                 
@@ -617,17 +624,19 @@ export const WhatsAppScreen: React.FC = () => {
                 <div className="absolute -top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex space-x-1">
                   <button
                     onClick={() => toggleMessageStar(message.id)}
-                    className={`p-1 ${message.isPinned ? 'bg-yellow-400' : darkMode ? 'bg-gray-600 hover:bg-gray-500' : 'bg-gray-200 hover:bg-gray-300'} rounded-full transition-colors`}
+                    aria-label="Marcar como favorita"
+                    className={`min-w-[32px] min-h-[32px] p-2 ${message.isPinned ? 'bg-yellow-400' : darkMode ? 'bg-gray-600 hover:bg-gray-500' : 'bg-gray-200 hover:bg-gray-300'} rounded-full transition-colors`}
                     title="Marcar como favorita"
                   >
-                    <Star size={12} className={`${message.isPinned ? 'text-white fill-white' : darkMode ? 'text-gray-300' : 'text-gray-600'}`} />
+                    <Star size={14} className={`${message.isPinned ? 'text-white fill-white' : darkMode ? 'text-gray-300' : 'text-gray-600'}`} />
                   </button>
                   <button
                     onClick={() => showToast('Reação adicionada!', 'success')}
-                    className={`p-1 ${darkMode ? 'bg-gray-600 hover:bg-gray-500' : 'bg-gray-200 hover:bg-gray-300'} rounded-full transition-colors`}
+                    aria-label="Reagir"
+                    className={`min-w-[32px] min-h-[32px] p-2 ${darkMode ? 'bg-gray-600 hover:bg-gray-500' : 'bg-gray-200 hover:bg-gray-300'} rounded-full transition-colors`}
                     title="Reagir"
                   >
-                    <ThumbsUp size={12} className={`${darkMode ? 'text-gray-300' : 'text-gray-600'}`} />
+                    <ThumbsUp size={14} className={`${darkMode ? 'text-gray-300' : 'text-gray-600'}`} />
                   </button>
                 </div>
               </div>
@@ -638,8 +647,8 @@ export const WhatsAppScreen: React.FC = () => {
 
         {/* AI Suggestions Panel */}
         {showAISuggestions && (
-          <div className={`${darkMode ? 'bg-gray-700 border-gray-600' : 'bg-blue-50 border-blue-200'} border-t p-4`}>
-            <h3 className={`font-semibold mb-3 ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>
+          <div className={`${darkMode ? 'bg-gray-700 border-gray-600' : 'bg-blue-50 border-blue-200'} border-t p-3 sm:p-4 flex-shrink-0`}>
+            <h3 className={`font-semibold mb-3 text-sm sm:text-base ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>
               Sugestões da IA
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
@@ -647,7 +656,7 @@ export const WhatsAppScreen: React.FC = () => {
                 <button
                   key={index}
                   onClick={() => insertSuggestion(suggestion)}
-                  className={`text-left p-3 ${darkMode ? 'bg-gray-600 hover:bg-gray-500 text-gray-200' : 'bg-white hover:bg-gray-50 text-gray-800'} rounded-lg transition-colors text-sm`}
+                  className={`text-left p-3 min-h-[44px] ${darkMode ? 'bg-gray-600 hover:bg-gray-500 text-gray-200' : 'bg-white hover:bg-gray-50 text-gray-800'} rounded-lg transition-colors text-sm`}
                 >
                   {suggestion}
                 </button>
@@ -657,11 +666,14 @@ export const WhatsAppScreen: React.FC = () => {
         )}
 
         {/* Input Area */}
-        <div className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} border-t p-4`}>
-          <div className="flex items-end space-x-3">
+        <div className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} border-t p-3 sm:p-4 flex-shrink-0`}
+          style={{ paddingBottom: 'max(1rem, env(safe-area-inset-bottom))' }}
+        >
+          <div className="flex items-end space-x-2 sm:space-x-3">
             <button
               onClick={handleAttachment}
-              className={`p-2 ${darkMode ? 'text-gray-400 hover:text-gray-200' : 'text-gray-600 hover:text-gray-800'} transition-colors`}
+              aria-label="Anexar arquivo"
+              className={`min-w-[44px] min-h-[44px] p-2 ${darkMode ? 'text-gray-400 hover:text-gray-200' : 'text-gray-600 hover:text-gray-800'} transition-colors flex-shrink-0`}
               title="Anexar arquivo"
             >
               <Paperclip size={20} />
@@ -673,14 +685,16 @@ export const WhatsAppScreen: React.FC = () => {
                 onChange={(e) => setInput(e.target.value)}
                 onKeyPress={handleKeyPress}
                 placeholder="Digite uma mensagem..."
-                className={`w-full ${darkMode ? 'bg-gray-700 border-gray-600 text-gray-200 placeholder-gray-400' : 'bg-gray-50 border-gray-200 text-gray-800 placeholder-gray-500'} border rounded-xl px-4 py-3 pr-12 resize-none focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-colors`}
+                aria-label="Mensagem"
+                className={`w-full ${darkMode ? 'bg-gray-700 border-gray-600 text-gray-200 placeholder-gray-400' : 'bg-gray-50 border-gray-200 text-gray-800 placeholder-gray-500'} border rounded-xl px-3 sm:px-4 py-3 pr-10 sm:pr-12 resize-none focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-colors`}
                 rows={1}
                 style={{ minHeight: '44px', maxHeight: '120px' }}
               />
               
               <button
                 onClick={() => setShowAISuggestions(!showAISuggestions)}
-                className={`absolute right-3 top-1/2 transform -translate-y-1/2 p-1 ${
+                aria-label="Sugestões da IA"
+                className={`absolute right-2 sm:right-3 top-1/2 transform -translate-y-1/2 min-w-[32px] min-h-[32px] p-2 ${
                   showAISuggestions 
                     ? 'text-blue-600' 
                     : darkMode ? 'text-gray-400 hover:text-blue-400' : 'text-gray-600 hover:text-blue-600'
@@ -693,7 +707,8 @@ export const WhatsAppScreen: React.FC = () => {
             
             <button
               onClick={handleEmoji}
-              className={`p-2 ${darkMode ? 'text-gray-400 hover:text-gray-200' : 'text-gray-600 hover:text-gray-800'} transition-colors`}
+              aria-label="Adicionar emoji"
+              className={`min-w-[44px] min-h-[44px] p-2 ${darkMode ? 'text-gray-400 hover:text-gray-200' : 'text-gray-600 hover:text-gray-800'} transition-colors flex-shrink-0 hidden sm:flex items-center justify-center`}
               title="Adicionar emoji"
             >
               <Smile size={20} />
@@ -702,7 +717,8 @@ export const WhatsAppScreen: React.FC = () => {
             {input.trim() ? (
               <button
                 onClick={handleSend}
-                className="p-3 bg-green-600 hover:bg-green-700 text-white rounded-xl transition-colors"
+                aria-label="Enviar mensagem"
+                className="min-w-[44px] min-h-[44px] p-3 bg-green-600 hover:bg-green-700 text-white rounded-xl transition-colors flex-shrink-0"
                 title="Enviar mensagem"
               >
                 <Send size={20} />
@@ -710,7 +726,8 @@ export const WhatsAppScreen: React.FC = () => {
             ) : (
               <button
                 onClick={handleVoiceRecording}
-                className={`p-3 ${isRecording ? 'bg-red-600 animate-pulse' : darkMode ? 'text-gray-400 hover:text-gray-200' : 'text-gray-600 hover:text-gray-800'} transition-colors rounded-xl`}
+                aria-label={isRecording ? 'Parar gravação' : 'Gravar mensagem de voz'}
+                className={`min-w-[44px] min-h-[44px] p-3 ${isRecording ? 'bg-red-600 animate-pulse' : darkMode ? 'text-gray-400 hover:text-gray-200' : 'text-gray-600 hover:text-gray-800'} transition-colors rounded-xl flex-shrink-0`}
                 title={isRecording ? 'Parar gravação' : 'Gravar mensagem de voz'}
               >
                 <Mic size={20} className={isRecording ? 'text-white' : ''} />
