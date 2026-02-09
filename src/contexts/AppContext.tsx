@@ -2,6 +2,9 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 import { supabase } from '../lib/supabase'
 import { useAuth } from './AuthContext'
 import { useDatabase } from '../hooks/useDatabase'
+import { useRealtimeTasks } from '../hooks/useRealtimeTasks'
+import { useRealtimeWhatsApp } from '../hooks/useRealtimeWhatsApp'
+import { usePresence } from '../hooks/usePresence'
 import { Task, Contract, WhatsAppMessage, WhatsAppChat, UserProfile } from '../types'
 
 export interface Message {
@@ -56,6 +59,8 @@ interface AppContextType {
   tasks: Task[]
   updateTasks: (tasks: Task[]) => void
   completeTask: (taskId: string) => Promise<void>
+  tasksLoading: boolean
+  refetchTasks: () => Promise<void>
   
   // Contracts
   contracts: Contract[]
@@ -67,6 +72,8 @@ interface AppContextType {
   setSelectedChat: (chat: WhatsAppChat | null) => void
   whatsappMessages: WhatsAppMessage[]
   addWhatsappMessage: (message: Omit<WhatsAppMessage, 'id' | 'timestamp'>) => Promise<void>
+  messagesLoading: boolean
+  refetchMessages: () => Promise<void>
   
   // User Profile
   userProfile: UserProfile | null
@@ -79,6 +86,10 @@ interface AppContextType {
   joinCircle: (inviteCode: string) => Promise<{ success: boolean; error?: string }>
   createCircle: (name: string, description?: string, isPublic?: boolean) => Promise<{ success: boolean; circle?: Circle; error?: string }>
   searchCircles: (query: string) => Promise<Circle[]>
+  
+  // Real-time & Presence
+  onlineUsers: any[]
+  isUserOnline: (userId: string) => boolean
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined)
@@ -97,7 +108,15 @@ interface AppProviderProps {
 
 export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   const { user } = useAuth()
-  const { loadMessages, loadTasks, loadContracts, loadWhatsAppChats, loadWhatsAppMessages } = useDatabase()
+  const { loadMessages, loadContracts, loadWhatsAppChats } = useDatabase()
+  
+  // WhatsApp state for selectedChat
+  const [selectedChat, setSelectedChat] = useState<WhatsAppChat | null>(null)
+  
+  // Real-time hooks
+  const { tasks, loading: tasksLoading, refetch: refetchTasks } = useRealtimeTasks()
+  const { messages: realtimeWhatsAppMessages, loading: messagesLoading, refetch: refetchMessages } = useRealtimeWhatsApp(selectedChat?.id || null)
+  const { onlineUsers, isUserOnline } = usePresence()
   
   // BYPASS AUTH - Skip loading checks
   // if (user === undefined) {
@@ -130,16 +149,13 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   const [messages, setMessages] = useState<Message[]>([])
   const [currentThread, setCurrentThread] = useState<string | null>(null)
   
-  // Tasks
-  const [tasks, setTasks] = useState<Task[]>([])
-  
   // Contracts
   const [contracts, setContracts] = useState<Contract[]>([])
   
-  // WhatsApp
+  // WhatsApp - chats list is loaded separately
   const [whatsappChats, setWhatsappChats] = useState<WhatsAppChat[]>([])
-  const [selectedChat, setSelectedChat] = useState<WhatsAppChat | null>(null)
-  const [whatsappMessages, setWhatsappMessages] = useState<WhatsAppMessage[]>([])
+  // whatsappMessages now comes from useRealtimeWhatsApp hook
+  const whatsappMessages = realtimeWhatsAppMessages
   
   // User Profile
   const [userProfile, setUserProfile] = useState<UserProfile | null>({
@@ -193,23 +209,20 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     // }
   }, [user])
 
-  // Load initial data
+  // Load initial data (messages, contracts, chats list)
+  // Tasks and WhatsApp messages are now loaded by real-time hooks
   useEffect(() => {
     const loadInitialData = async () => {
       try {
-        const [messagesData, tasksData, contractsData, chatsData, whatsappMessagesData] = await Promise.all([
+        const [messagesData, contractsData, chatsData] = await Promise.all([
           loadMessages(),
-          loadTasks(),
           loadContracts(),
-          loadWhatsAppChats(),
-          loadWhatsAppMessages()
+          loadWhatsAppChats()
         ])
         
         if (messagesData) setMessages(messagesData)
-        if (tasksData) setTasks(tasksData)
         if (contractsData) setContracts(contractsData)
         if (chatsData) setWhatsappChats(chatsData)
-        if (whatsappMessagesData) setWhatsappMessages(whatsappMessagesData)
       } catch (error) {
         console.error('Error loading initial data:', error)
       }
@@ -264,17 +277,24 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     setCurrentThread(null)
   }
 
-  // Update tasks
+  // Update tasks - no longer manages local state, but kept for compatibility
   const updateTasks = (newTasks: Task[]) => {
-    setTasks(newTasks)
+    // Tasks are now managed by useRealtimeTasks hook
+    // This function is kept for backward compatibility
+    console.log('updateTasks called but tasks are now managed by real-time hook')
   }
 
-  // Complete task
+  // Complete task - update in database, real-time hook will sync
   const completeTask = async (taskId: string) => {
-    setTasks(prev => prev.map(task => 
-      task.id === taskId ? { ...task, completed: true } : task
-    ))
-    // TODO: Update in database
+    try {
+      await supabase
+        .from('tasks')
+        .update({ completed: true })
+        .eq('id', taskId)
+      // Real-time subscription will update the local state
+    } catch (error) {
+      console.error('Error completing task:', error)
+    }
   }
 
   // Add contract
@@ -289,16 +309,29 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     // TODO: Save to database
   }
 
-  // Add WhatsApp message
+  // Add WhatsApp message - save to database, real-time hook will sync
   const addWhatsappMessage = async (messageData: Omit<WhatsAppMessage, 'id' | 'timestamp'>) => {
-    const message: WhatsAppMessage = {
-      ...messageData,
-      id: `wa_msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-      timestamp: new Date()
+    try {
+      if (!selectedChat) return
+      
+      const { error } = await supabase
+        .from('whatsapp_messages')
+        .insert({
+          chat_id: selectedChat.id,
+          sender: messageData.sender,
+          content: messageData.content,
+          is_own: messageData.isOwn,
+          status: messageData.status,
+          type: messageData.type || 'text'
+        })
+      
+      if (error) {
+        console.error('Error adding WhatsApp message:', error)
+      }
+      // Real-time subscription will update the local state
+    } catch (error) {
+      console.error('Error adding WhatsApp message:', error)
     }
-
-    setWhatsappMessages(prev => [...prev, message])
-    // TODO: Save to database
   }
 
   // Update user profile
@@ -367,6 +400,8 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     tasks,
     updateTasks,
     completeTask,
+    tasksLoading,
+    refetchTasks,
     
     // Contracts
     contracts,
@@ -378,6 +413,8 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     setSelectedChat,
     whatsappMessages,
     addWhatsappMessage,
+    messagesLoading,
+    refetchMessages,
     
     // User Profile
     userProfile,
@@ -389,7 +426,11 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     userCircles,
     joinCircle,
     createCircle,
-    searchCircles
+    searchCircles,
+    
+    // Real-time & Presence
+    onlineUsers,
+    isUserOnline
   }
 
   return (
