@@ -178,32 +178,34 @@ Assinatura: _________________________`;
     return (
       <div className={`flex flex-col h-screen ${darkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
         {/* Header */}
-        <div className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} border-b px-6 py-4 flex items-center justify-between`}>
-          <div className="flex items-center space-x-3">
-            <div className={`w-10 h-10 ${darkMode ? 'bg-gradient-to-r from-purple-600 to-pink-600' : 'bg-gradient-to-r from-purple-500 to-pink-500'} rounded-full flex items-center justify-center`}>
+        <div className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} border-b px-3 sm:px-4 md:px-6 py-3 sm:py-4 flex items-center justify-between flex-shrink-0`}>
+          <div className="flex items-center space-x-2 sm:space-x-3 flex-1 min-w-0">
+            <div className={`w-8 h-8 sm:w-10 sm:h-10 ${darkMode ? 'bg-gradient-to-r from-purple-600 to-pink-600' : 'bg-gradient-to-r from-purple-500 to-pink-500'} rounded-full flex items-center justify-center flex-shrink-0`}>
               <Eye size={20} className="text-white" />
             </div>
-            <div>
-              <h1 className={`text-lg font-semibold ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>
+            <div className="flex-1 min-w-0">
+              <h1 className={`text-base sm:text-lg font-semibold truncate ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>
                 Visualizar Contrato
               </h1>
-              <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+              <p className={`text-xs sm:text-sm truncate ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
                 Revise antes de salvar
               </p>
             </div>
           </div>
           
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2 flex-shrink-0">
             <button
               onClick={() => setShowPreview(false)}
-              className={`px-4 py-2 ${darkMode ? 'bg-gray-700 hover:bg-gray-600 text-gray-200' : 'bg-gray-200 hover:bg-gray-300 text-gray-800'} rounded-lg transition-colors`}
+              aria-label="Editar"
+              className={`min-w-[80px] min-h-[44px] px-3 sm:px-4 py-2 ${darkMode ? 'bg-gray-700 hover:bg-gray-600 text-gray-200' : 'bg-gray-200 hover:bg-gray-300 text-gray-800'} rounded-lg transition-colors text-sm`}
             >
               Editar
             </button>
             <button
               onClick={handleSave}
               disabled={isSaving}
-              className="px-4 py-2 bg-green-600 hover:bg-green-700 disabled:bg-green-400 text-white rounded-lg transition-colors flex items-center space-x-2"
+              aria-label="Salvar contrato"
+              className="min-w-[100px] min-h-[44px] px-3 sm:px-4 py-2 bg-green-600 hover:bg-green-700 disabled:bg-green-400 text-white rounded-lg transition-colors flex items-center justify-center space-x-2 text-sm"
             >
               {isSaving ? (
                 <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -216,8 +218,8 @@ Assinatura: _________________________`;
         </div>
 
         {/* Preview */}
-        <div className="flex-1 overflow-y-auto p-6">
-          <div className={`max-w-2xl mx-auto ${darkMode ? 'bg-gray-800' : 'bg-white'} rounded-xl shadow-lg p-8`}>
+        <div className="flex-1 overflow-y-auto px-3 sm:px-4 md:px-6 py-4 sm:py-6 pb-20 sm:pb-24">
+          <div className={`max-w-2xl mx-auto ${darkMode ? 'bg-gray-800' : 'bg-white'} rounded-xl shadow-lg p-4 sm:p-6 md:p-8`}>
             <pre className={`whitespace-pre-wrap font-mono text-sm leading-relaxed ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>
               {generateContract()}
             </pre>
@@ -230,30 +232,31 @@ Assinatura: _________________________`;
   return (
     <div className={`flex flex-col h-screen ${darkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
       {/* Header */}
-      <div className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} border-b px-6 py-4 flex items-center justify-between`}>
-        <div className="flex items-center space-x-3">
-          <div className={`w-10 h-10 ${darkMode ? 'bg-gradient-to-r from-purple-600 to-pink-600' : 'bg-gradient-to-r from-purple-500 to-pink-500'} rounded-full flex items-center justify-center`}>
+      <div className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} border-b px-3 sm:px-4 md:px-6 py-3 sm:py-4 flex items-center justify-between flex-shrink-0`}>
+        <div className="flex items-center space-x-2 sm:space-x-3 flex-1 min-w-0">
+          <div className={`w-8 h-8 sm:w-10 sm:h-10 ${darkMode ? 'bg-gradient-to-r from-purple-600 to-pink-600' : 'bg-gradient-to-r from-purple-500 to-pink-500'} rounded-full flex items-center justify-center flex-shrink-0`}>
             <FileText size={20} className="text-white" />
           </div>
-          <div>
-            <h1 className={`text-lg font-semibold ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>
+          <div className="flex-1 min-w-0">
+            <h1 className={`text-base sm:text-lg font-semibold truncate ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>
               Novo Minicontrato
             </h1>
-            <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+            <p className={`text-xs sm:text-sm truncate ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
               Crie contratos simples e eficazes
             </p>
           </div>
         </div>
         
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-2 flex-shrink-0">
           <button
             onClick={() => setShowPreview(true)}
             disabled={!isFormValid}
-            className={`px-4 py-2 ${
+            aria-label="Visualizar contrato"
+            className={`min-w-[100px] min-h-[44px] px-3 sm:px-4 py-2 ${
               isFormValid
                 ? darkMode ? 'bg-blue-600 hover:bg-blue-700 text-white' : 'bg-blue-600 hover:bg-blue-700 text-white'
                 : darkMode ? 'bg-gray-700 text-gray-500' : 'bg-gray-200 text-gray-400'
-            } rounded-lg transition-colors flex items-center space-x-2 disabled:cursor-not-allowed`}
+            } rounded-lg transition-colors flex items-center justify-center space-x-2 disabled:cursor-not-allowed text-sm`}
           >
             <Eye size={16} />
             <span>Visualizar</span>
@@ -262,10 +265,10 @@ Assinatura: _________________________`;
       </div>
 
       {/* Form */}
-      <div className="flex-1 overflow-y-auto p-6">
-        <div className="max-w-2xl mx-auto space-y-6">
+      <div className="flex-1 overflow-y-auto px-3 sm:px-4 md:px-6 py-4 sm:py-6 pb-20 sm:pb-24">
+        <div className="max-w-2xl mx-auto space-y-4 sm:space-y-6">
           {/* Basic Info */}
-          <div className={`${darkMode ? 'bg-gray-800' : 'bg-white'} rounded-xl shadow-sm p-6`}>
+          <div className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} rounded-xl shadow-sm p-4 sm:p-6 border`}>
             <h2 className={`text-lg font-semibold mb-4 ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>
               Informações Básicas
             </h2>
