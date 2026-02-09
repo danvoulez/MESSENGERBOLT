@@ -1,14 +1,23 @@
 import React from 'react';
 import { useApp } from '../contexts/AppContext';
 import { useAuth } from '../contexts/AuthContext';
+import { useToast } from '../contexts/ToastContext';
 import { MessageSquare, MessageCircle, FileText, Moon, Sun, LogOut, Shield } from 'lucide-react';
 
 export const Navigation: React.FC = () => {
   const { currentScreen, setCurrentScreen, darkMode, setDarkMode, leftPanelOpen, rightPanelOpen, setRightPanelOpen } = useApp();
   const { signOut, user } = useAuth();
+  const { showToast } = useToast();
 
   const handleLogout = async () => {
-    await signOut();
+    if (confirm('Tem certeza que deseja sair?')) {
+      try {
+        await signOut();
+        showToast('Logout realizado com sucesso!', 'success');
+      } catch (error) {
+        showToast('Erro ao fazer logout. Tente novamente.', 'error');
+      }
+    }
   };
 
   return (

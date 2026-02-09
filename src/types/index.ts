@@ -1,7 +1,10 @@
 export interface UserProfile {
+  id: string;
   name: string;
-  role: string;
+  email: string;
   avatar?: string;
+  role: string;
+  created_at: string;
 }
 
 export interface Message {

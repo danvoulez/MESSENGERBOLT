@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useApp } from '../contexts/AppContext';
+import { useToast } from '../contexts/ToastContext';
 import { Users, Search, Plus, Key, ArrowRight, Sparkles, Globe, Lock } from 'lucide-react';
 
 interface Circle {
@@ -15,6 +16,7 @@ interface Circle {
 export const OnboardingScreen: React.FC = () => {
   const { user } = useAuth();
   const { joinCircle, createCircle, searchCircles } = useApp();
+  const { showToast } = useToast();
   const [step, setStep] = useState<'welcome' | 'join-circle' | 'create-circle'>('welcome');
   const [circleCode, setCircleCode] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
@@ -73,17 +75,20 @@ export const OnboardingScreen: React.FC = () => {
   );
 
   const handleJoinByCode = async () => {
-    if (!circleCode.trim()) return;
+    if (!circleCode.trim()) {
+      showToast('Digite o código do círculo', 'warning');
+      return;
+    }
     
     setLoading(true);
     
     const result = await joinCircle(circleCode);
     
     if (result.success) {
+      showToast('Entrou no círculo com sucesso!', 'success');
       // Success - user will be redirected to main app automatically
-      console.log('Successfully joined circle');
     } else {
-      alert(result.error || 'Erro ao entrar no círculo');
+      showToast(result.error || 'Erro ao entrar no círculo', 'error');
       setLoading(false);
     }
   };
@@ -94,15 +99,18 @@ export const OnboardingScreen: React.FC = () => {
     const result = await joinCircle(circle.code);
     
     if (result.success) {
-      console.log('Successfully joined circle:', circle.name);
+      showToast(`Entrou no círculo ${circle.name}!`, 'success');
     } else {
-      alert(result.error || 'Erro ao entrar no círculo');
+      showToast(result.error || 'Erro ao entrar no círculo', 'error');
       setLoading(false);
     }
   };
 
   const handleCreateCircle = async () => {
-    if (!newCircle.name.trim()) return;
+    if (!newCircle.name.trim()) {
+      showToast('Digite o nome do círculo', 'warning');
+      return;
+    }
     
     setLoading(true);
     
@@ -113,9 +121,9 @@ export const OnboardingScreen: React.FC = () => {
     );
     
     if (result.success) {
-      console.log('Successfully created circle:', newCircle.name);
+      showToast(`Círculo "${newCircle.name}" criado com sucesso!`, 'success');
     } else {
-      alert(result.error || 'Erro ao criar círculo');
+      showToast(result.error || 'Erro ao criar círculo', 'error');
       setLoading(false);
     }
   };

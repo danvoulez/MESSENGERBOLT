@@ -47,6 +47,8 @@ interface AppContextType {
   // Messages
   messages: Message[]
   addMessage: (message: Omit<Message, 'id' | 'timestamp'>) => Promise<void>
+  deleteThread: (threadId: string) => void
+  clearAllMessages: () => void
   currentThread: string | null
   setCurrentThread: (threadId: string | null) => void
   
@@ -109,11 +111,20 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   //   )
   // }
 
-  // UI State
+  // UI State - load from localStorage where applicable
   const [currentScreen, setCurrentScreen] = useState<Screen>('chat')
-  const [darkMode, setDarkMode] = useState(false)
-  const [leftPanelOpen, setLeftPanelOpen] = useState(true)
-  const [rightPanelOpen, setRightPanelOpen] = useState(true)
+  const [darkMode, setDarkMode] = useState(() => {
+    const saved = localStorage.getItem('darkMode')
+    return saved ? JSON.parse(saved) : false
+  })
+  const [leftPanelOpen, setLeftPanelOpen] = useState(() => {
+    const saved = localStorage.getItem('leftPanelOpen')
+    return saved ? JSON.parse(saved) : true
+  })
+  const [rightPanelOpen, setRightPanelOpen] = useState(() => {
+    const saved = localStorage.getItem('rightPanelOpen')
+    return saved ? JSON.parse(saved) : true
+  })
   
   // Messages
   const [messages, setMessages] = useState<Message[]>([])
@@ -207,6 +218,19 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     loadInitialData()
   }, [])
 
+  // Persist UI preferences to localStorage
+  useEffect(() => {
+    localStorage.setItem('darkMode', JSON.stringify(darkMode))
+  }, [darkMode])
+
+  useEffect(() => {
+    localStorage.setItem('leftPanelOpen', JSON.stringify(leftPanelOpen))
+  }, [leftPanelOpen])
+
+  useEffect(() => {
+    localStorage.setItem('rightPanelOpen', JSON.stringify(rightPanelOpen))
+  }, [rightPanelOpen])
+
   // Mock function for now
   const loadUserCircles = async () => {
     // TODO: Implement when circles system is active
@@ -223,6 +247,21 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     setMessages(prev => [...prev, message])
 
     // TODO: Save to database when circles system is active
+  }
+
+  // Delete messages in a thread
+  const deleteThread = (threadId: string) => {
+    setMessages(prev => prev.filter(msg => msg.threadId !== threadId))
+    // If current thread is being deleted, reset to main chat
+    if (currentThread === threadId) {
+      setCurrentThread(null)
+    }
+  }
+
+  // Clear all messages
+  const clearAllMessages = () => {
+    setMessages([])
+    setCurrentThread(null)
   }
 
   // Update tasks
@@ -319,6 +358,8 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     // Messages
     messages,
     addMessage,
+    deleteThread,
+    clearAllMessages,
     currentThread,
     setCurrentThread,
     
