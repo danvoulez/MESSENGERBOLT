@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { AuthProvider, useAuth } from './contexts/AuthContext'
 import { AppProvider } from './contexts/AppContext'
 import { ToastProvider } from './contexts/ToastContext'
@@ -12,10 +12,24 @@ import { LeftPanel } from './components/LeftPanel'
 import { RightPanel } from './components/RightPanel'
 import { Navigation } from './components/Navigation'
 import { useApp } from './contexts/AppContext'
+import { Moon, Sun } from 'lucide-react'
 
 const AppContent: React.FC = () => {
   const { user, loading } = useAuth()
-  const { currentScreen, darkMode } = useApp()
+  const { currentScreen, darkMode, setDarkMode, leftPanelOpen, rightPanelOpen, setLeftPanelOpen, setRightPanelOpen } = useApp()
+
+  // Close panels on mobile when screen changes
+  useEffect(() => {
+    const checkAndClosePanels = () => {
+      const isMobile = window.innerWidth < 768
+      if (isMobile && (leftPanelOpen || rightPanelOpen)) {
+        setLeftPanelOpen(false)
+        setRightPanelOpen(false)
+      }
+    }
+
+    checkAndClosePanels()
+  }, [currentScreen, leftPanelOpen, rightPanelOpen, setLeftPanelOpen, setRightPanelOpen])
 
   // BYPASS AUTH - Go straight to main app
   // if (loading) {
@@ -57,6 +71,9 @@ const AppContent: React.FC = () => {
     }
   }
 
+  // Show floating dark mode toggle only when no panels are open
+  const showDarkModeToggle = !leftPanelOpen && !rightPanelOpen
+
   return (
     <div className={`${darkMode ? 'dark' : ''}`}>
       <div className="relative">
@@ -64,6 +81,18 @@ const AppContent: React.FC = () => {
         {renderScreen()}
         <RightPanel />
         <Navigation />
+        
+        {/* Floating Dark Mode Toggle */}
+        {showDarkModeToggle && (
+          <button
+            onClick={() => setDarkMode(!darkMode)}
+            aria-label={darkMode ? 'Modo claro' : 'Modo escuro'}
+            title={darkMode ? 'Modo claro' : 'Modo escuro'}
+            className={`fixed top-4 right-4 z-[60] ${darkMode ? 'bg-gray-800 text-gray-200 border-gray-600' : 'bg-white text-gray-700 border-gray-200'} min-w-[44px] min-h-[44px] p-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 border`}
+          >
+            {darkMode ? <Sun size={20} /> : <Moon size={20} />}
+          </button>
+        )}
       </div>
     </div>
   )

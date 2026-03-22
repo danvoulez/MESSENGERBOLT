@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useToast } from '../contexts/ToastContext';
+import { useApp } from '../contexts/AppContext';
 import { Shield, Clock, AlertTriangle, Key, Eye, EyeOff, LogOut } from 'lucide-react';
 
 export const SecurityPanel: React.FC = () => {
   const { user, claims, getAuthHistory, revokeToken } = useAuth();
   const { showToast } = useToast();
+  const { darkMode } = useApp();
   const [authHistory, setAuthHistory] = useState<any[]>([]);
   const [showTokenDetails, setShowTokenDetails] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -74,61 +76,63 @@ export const SecurityPanel: React.FC = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6 space-y-6">
-      {/* Header */}
-      <div className="bg-white rounded-xl shadow-sm p-6 border">
-        <div className="flex items-center space-x-3 mb-4">
-          <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center">
+    <div className={`min-h-screen ${darkMode ? 'bg-gray-900' : 'bg-gray-50'} pb-20 sm:pb-24`}>
+      <div className="max-w-4xl mx-auto px-3 sm:px-4 md:px-6 py-4 sm:py-6 space-y-4 sm:space-y-6">
+        {/* Header */}
+        <div className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} rounded-xl shadow-sm p-4 sm:p-6 border`}>
+          <div className="flex items-center space-x-3 mb-4">
+          <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center flex-shrink-0">
             <Shield size={24} className="text-white" />
           </div>
-          <div>
-            <h1 className="text-2xl font-bold text-gray-800">Painel de Segurança</h1>
-            <p className="text-gray-600">Autenticação institucional e auditoria completa</p>
+          <div className="flex-1 min-w-0">
+            <h1 className={`text-lg sm:text-2xl font-bold truncate ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>Painel de Segurança</h1>
+            <p className={`text-sm sm:text-base truncate ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Autenticação institucional e auditoria completa</p>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4">
+          <div className={`${darkMode ? 'bg-green-900 bg-opacity-30 border-green-700' : 'bg-green-50 border-green-200'} border rounded-lg p-3 sm:p-4`}>
             <div className="flex items-center space-x-2 mb-2">
-              <Shield size={20} className="text-green-600" />
-              <span className="font-semibold text-green-800">Status</span>
+              <Shield size={18} className={`${darkMode ? 'text-green-400' : 'text-green-600'}`} />
+              <span className={`font-semibold text-sm ${darkMode ? 'text-green-300' : 'text-green-800'}`}>Status</span>
             </div>
-            <p className="text-green-700">Autenticado</p>
-            <p className="text-sm text-green-600">Tenant: voulezvous</p>
+            <p className={`text-sm sm:text-base ${darkMode ? 'text-green-200' : 'text-green-700'}`}>Autenticado</p>
+            <p className={`text-xs sm:text-sm ${darkMode ? 'text-green-300' : 'text-green-600'}`}>Tenant: voulezvous</p>
           </div>
 
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <div className={`${darkMode ? 'bg-blue-900 bg-opacity-30 border-blue-700' : 'bg-blue-50 border-blue-200'} border rounded-lg p-3 sm:p-4`}>
             <div className="flex items-center space-x-2 mb-2">
-              <Key size={20} className="text-blue-600" />
-              <span className="font-semibold text-blue-800">JWT</span>
+              <Key size={18} className={`${darkMode ? 'text-blue-400' : 'text-blue-600'}`} />
+              <span className={`font-semibold text-sm ${darkMode ? 'text-blue-300' : 'text-blue-800'}`}>JWT</span>
             </div>
-            <p className="text-blue-700">Token Ativo</p>
+            <p className={`text-sm sm:text-base ${darkMode ? 'text-blue-200' : 'text-blue-700'}`}>Token Ativo</p>
             {claims && (
-              <p className="text-sm text-blue-600">
+              <p className={`text-xs sm:text-sm ${darkMode ? 'text-blue-300' : 'text-blue-600'}`}>
                 Expira: {new Date(claims.exp * 1000).toLocaleTimeString('pt-BR')}
               </p>
             )}
           </div>
 
-          <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
+          <div className={`${darkMode ? 'bg-purple-900 bg-opacity-30 border-purple-700' : 'bg-purple-50 border-purple-200'} border rounded-lg p-3 sm:p-4`}>
             <div className="flex items-center space-x-2 mb-2">
-              <Clock size={20} className="text-purple-600" />
-              <span className="font-semibold text-purple-800">Auditoria</span>
+              <Clock size={18} className={`${darkMode ? 'text-purple-400' : 'text-purple-600'}`} />
+              <span className={`font-semibold text-sm ${darkMode ? 'text-purple-300' : 'text-purple-800'}`}>Auditoria</span>
             </div>
-            <p className="text-purple-700">Rastreamento Ativo</p>
-            <p className="text-sm text-purple-600">{authHistory.length} eventos</p>
+            <p className={`text-sm sm:text-base ${darkMode ? 'text-purple-200' : 'text-purple-700'}`}>Rastreamento Ativo</p>
+            <p className={`text-xs sm:text-sm ${darkMode ? 'text-purple-300' : 'text-purple-600'}`}>{authHistory.length} eventos</p>
           </div>
         </div>
       </div>
 
       {/* Token Details */}
       {claims && (
-        <div className="bg-white rounded-xl shadow-sm p-6 border">
+        <div className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} rounded-xl shadow-sm p-4 sm:p-6 border`}>
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-gray-800">Detalhes do Token JWT</h2>
+            <h2 className={`text-base sm:text-lg font-semibold truncate ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>Detalhes do Token JWT</h2>
             <button
               onClick={() => setShowTokenDetails(!showTokenDetails)}
-              className="flex items-center space-x-2 px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+              aria-label={showTokenDetails ? 'Ocultar detalhes' : 'Mostrar detalhes'}
+              className={`flex items-center space-x-2 min-w-[100px] min-h-[44px] px-3 py-2 ${darkMode ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-100 hover:bg-gray-200'} rounded-lg transition-colors flex-shrink-0`}
             >
               {showTokenDetails ? <EyeOff size={16} /> : <Eye size={16} />}
               <span className="text-sm">{showTokenDetails ? 'Ocultar' : 'Mostrar'}</span>
@@ -136,15 +140,15 @@ export const SecurityPanel: React.FC = () => {
           </div>
 
           {showTokenDetails && (
-            <div className="bg-gray-50 rounded-lg p-4 font-mono text-sm space-y-2">
-              <div><strong>Subject:</strong> {claims.sub}</div>
-              <div><strong>Issuer:</strong> {claims.iss}</div>
-              <div><strong>Audience:</strong> {claims.aud}</div>
-              <div><strong>JWT ID:</strong> {claims.jti}</div>
-              <div><strong>Tenant:</strong> {claims.tenant}</div>
-              <div><strong>Issued At:</strong> {new Date(claims.iat * 1000).toLocaleString('pt-BR')}</div>
-              <div><strong>Expires At:</strong> {new Date(claims.exp * 1000).toLocaleString('pt-BR')}</div>
-              {claims.role && <div><strong>Role:</strong> {claims.role}</div>}
+            <div className={`${darkMode ? 'bg-gray-900 border-gray-700' : 'bg-gray-50'} rounded-lg p-3 sm:p-4 font-mono text-xs sm:text-sm space-y-2 overflow-x-auto`}>
+              <div className={`${darkMode ? 'text-gray-300' : 'text-gray-800'}`}><strong>Subject:</strong> {claims.sub}</div>
+              <div className={`${darkMode ? 'text-gray-300' : 'text-gray-800'}`}><strong>Issuer:</strong> {claims.iss}</div>
+              <div className={`${darkMode ? 'text-gray-300' : 'text-gray-800'}`}><strong>Audience:</strong> {claims.aud}</div>
+              <div className={`${darkMode ? 'text-gray-300' : 'text-gray-800'}`}><strong>JWT ID:</strong> {claims.jti}</div>
+              <div className={`${darkMode ? 'text-gray-300' : 'text-gray-800'}`}><strong>Tenant:</strong> {claims.tenant}</div>
+              <div className={`${darkMode ? 'text-gray-300' : 'text-gray-800'}`}><strong>Issued At:</strong> {new Date(claims.iat * 1000).toLocaleString('pt-BR')}</div>
+              <div className={`${darkMode ? 'text-gray-300' : 'text-gray-800'}`}><strong>Expires At:</strong> {new Date(claims.exp * 1000).toLocaleString('pt-BR')}</div>
+              {claims.role && <div className={`${darkMode ? 'text-gray-300' : 'text-gray-800'}`}><strong>Role:</strong> {claims.role}</div>}
             </div>
           )}
 
@@ -169,13 +173,14 @@ export const SecurityPanel: React.FC = () => {
       )}
 
       {/* Auth History */}
-      <div className="bg-white rounded-xl shadow-sm p-6 border">
+      <div className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} rounded-xl shadow-sm p-4 sm:p-6 border`}>
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold text-gray-800">Histórico de Autenticação</h2>
+          <h2 className={`text-base sm:text-lg font-semibold truncate ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>Histórico de Autenticação</h2>
           <button
             onClick={loadAuthHistory}
             disabled={loading}
-            className="px-3 py-1 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white rounded-lg transition-colors text-sm"
+            aria-label="Atualizar histórico"
+            className={`min-w-[120px] min-h-[44px] px-3 py-2 ${darkMode ? 'bg-blue-700 hover:bg-blue-600 disabled:bg-blue-800' : 'bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400'} text-white rounded-lg transition-colors text-sm`}
           >
             {loading ? 'Carregando...' : 'Atualizar'}
           </button>
@@ -183,7 +188,7 @@ export const SecurityPanel: React.FC = () => {
 
         <div className="space-y-3">
           {authHistory.length === 0 ? (
-            <p className="text-gray-500 text-center py-8">Nenhum evento de autenticação registrado</p>
+            <p className={`${darkMode ? 'text-gray-400' : 'text-gray-500'} text-center py-8`}>Nenhum evento de autenticação registrado</p>
           ) : (
             authHistory.map((event, index) => (
               <div
@@ -225,6 +230,7 @@ export const SecurityPanel: React.FC = () => {
             ))
           )}
         </div>
+      </div>
       </div>
     </div>
   );
